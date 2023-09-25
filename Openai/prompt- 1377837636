@@ -1,0 +1,6 @@
+OpenAI response for Prompt: using artificial intelligence write a python code to print hello world 
+ ***********************
+
+
+
+print("Hello, World!")
