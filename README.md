@@ -40,7 +40,7 @@ Now if the user is bored and just wanna chat with the bot, he can first use the 
 1) Jarvis switch to chat mode
 
 Now the user can ask whatever he feels like in a normal chat , keeping in mind the abilities of an AI
-To exit this mode and back to the basic functions, we can use-
+To exit this mode and back to the basic functions, we can use _
 2) Jarvis exit chat mode
 
 
