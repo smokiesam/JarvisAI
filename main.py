@@ -13,6 +13,30 @@ from config import apikey
 import datetime
 import random
 
+chatStr = ""
+use_openai = False  # Flag to control OpenAI API usage
+
+def chat(query):
+    global chatStr
+    print(chatStr)
+    if use_openai:
+        openai.api_key = apikey
+        chatStr += f"Sam: {query}\n Jarvis: "
+        response = openai.Completion.create(
+            model="gpt-3.5-turbo-instruct",
+            prompt=chatStr,
+            temperature=1,
+            max_tokens=256,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+        )
+        speaker.Speak(response["choices"][0]["text"])
+        chatStr += f"{response['choices'][0]['text']}\n"
+        return response["choices"][0]["text"]
+    else:
+        return "Chat mode is currently disabled."
+
 def ai(prompt):
     openai.api_key = apikey
     text= f"OpenAI response for Prompt: {prompt} \n ***********************\n\n"
@@ -69,21 +93,18 @@ volume_level = 5
 while True:
     print("Listening...")
     query = takeCommand()
-    # todo : Add more sites
-    sites = [
-        ["google", "https://www.google.com"],
-        ["youtube", "https://www.youtube.com"],
-        ["wikipedia", "https://www.wikipedia.com"],
-        ["gmail", "https://www.gmail.com"]
-    ]
 
-    for site in sites:
-        if f"Open {site[0]}".lower() in query.lower():
-            statement = f"Opening {site[0]} sir..."
-            speaker.Speak(statement)
-            webbrowser.open(site[1])
+    if "switch to chat mode" in query.lower():
+        use_openai = True
+        speaker.Speak("Chat mode is enabled. How may I assist you?")
+    elif "exit chat mode" in query.lower():
+        use_openai = False
+        speaker.Speak("Chat mode is disabled. You can now use other functions.")
 
-    if "play music" in query:
+    if use_openai:
+        response = chat(query)
+
+    elif "play music" in query:
         if not playing:
             pygame.mixer.music.load(songs[current_song_index]["path"])
             pygame.mixer.music.play()
@@ -145,13 +166,33 @@ while True:
                     speaker.Speak("Invalid volume level. Please specify a number between 1 and 10.")
 
 
-    if "the time" in query:
+    elif "the time" in query:
             # **Fix:** Get the current time in the local time zone
             now = datetime.datetime.now()
             # Format the time as 12-hour clock with AM/PM
             strfTime = now.strftime("%I:%M %p")
             # Speak the time
             speaker.Speak(f"Sir, the time is {strfTime}")
+
+    elif "Using artificial intelligence".lower() in query.lower():
+          ai(prompt=query)
+
+    else:
+        chat(query)
+
+    # todo : Add more sites
+    sites = [
+        ["google", "https://www.google.com"],
+        ["youtube", "https://www.youtube.com"],
+        ["wikipedia", "https://www.wikipedia.com"],
+        ["gmail", "https://www.gmail.com"]
+    ]
+
+    for site in sites:
+        if f"Open {site[0]}".lower() in query.lower():
+            statement = f"Opening {site[0]} sir..."
+            speaker.Speak(statement)
+            webbrowser.open(site[1])
 
     # todo : Add more apps to the list
     apps = [
@@ -167,9 +208,6 @@ while True:
             speaker.Speak(statement)
             webbrowser.open(app[1])
 
-
-    if "Using artificial intelligence".lower() in query.lower():
-          ai(prompt=query)
 
 
 
