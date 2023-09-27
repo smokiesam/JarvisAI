@@ -46,7 +46,7 @@ To exit this mode and back to the basic functions, we can use -
 
 
 
-
+P.s. - a config file containing the apikey is included in the .gitignore so as to secure the key. Create a separate file named config.py and add your own api key in a variable apikey ie - apikey = "1xxh3" and the project will work just fine.
 
 
 
